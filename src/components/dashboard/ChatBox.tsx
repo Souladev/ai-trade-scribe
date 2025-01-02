@@ -25,7 +25,7 @@ export function ChatBox() {
     e.preventDefault();
     if (!input.trim()) return;
 
-    console.log("Submitting message:", input); // Debug log
+    console.log("Submitting message:", input);
 
     const newMessage: Message = {
       id: messages.length + 1,
@@ -34,8 +34,10 @@ export function ChatBox() {
     };
 
     setMessages((prevMessages) => {
-      console.log("Previous messages:", prevMessages); // Debug log
-      return [...prevMessages, newMessage];
+      console.log("Previous messages:", prevMessages);
+      // Ensure we're working with a valid array
+      const validMessages = Array.isArray(prevMessages) ? prevMessages : [];
+      return [...validMessages, newMessage];
     });
     setInput("");
 
@@ -47,8 +49,10 @@ export function ChatBox() {
         type: "system",
       };
       setMessages((prevMessages) => {
-        console.log("Adding AI response:", response); // Debug log
-        return [...prevMessages, response];
+        console.log("Adding AI response:", response);
+        // Ensure we're working with a valid array
+        const validMessages = Array.isArray(prevMessages) ? prevMessages : [];
+        return [...validMessages, response];
       });
     }, 1000);
   };
@@ -61,10 +65,9 @@ export function ChatBox() {
       
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
-          {messages.map((message) => {
-            // Add null check
-            if (!message) {
-              console.warn("Received null message in chat"); // Debug log
+          {(messages || []).map((message) => {
+            if (!message || typeof message !== 'object') {
+              console.warn("Invalid message in chat:", message);
               return null;
             }
 
