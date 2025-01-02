@@ -1,12 +1,24 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { ChatBox } from "@/components/dashboard/ChatBox";
+import { Chart } from "@/components/dashboard/Chart";
+import { Header } from "@/components/layout/Header";
+import { Sidebar } from "@/components/layout/Sidebar";
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <Header />
+      <Sidebar />
+      
+      <main className="ml-16 mt-16 md:ml-64">
+        <div className="container grid gap-4 p-4 md:grid-cols-3">
+          <div className="md:col-span-2">
+            <Chart />
+          </div>
+          <div>
+            <ChatBox />
+          </div>
+        </div>
+      </main>
     </div>
   );
 };
