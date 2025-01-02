@@ -25,13 +25,18 @@ export function ChatBox() {
     e.preventDefault();
     if (!input.trim()) return;
 
+    console.log("Submitting message:", input); // Debug log
+
     const newMessage: Message = {
       id: messages.length + 1,
       content: input,
       type: "user",
     };
 
-    setMessages([...messages, newMessage]);
+    setMessages((prevMessages) => {
+      console.log("Previous messages:", prevMessages); // Debug log
+      return [...prevMessages, newMessage];
+    });
     setInput("");
 
     // Simulate AI response
@@ -41,7 +46,10 @@ export function ChatBox() {
         content: "I'll analyze your strategy and run a backtest simulation. Please wait a moment...",
         type: "system",
       };
-      setMessages((prev) => [...prev, response]);
+      setMessages((prevMessages) => {
+        console.log("Adding AI response:", response); // Debug log
+        return [...prevMessages, response];
+      });
     }, 1000);
   };
 
@@ -53,24 +61,32 @@ export function ChatBox() {
       
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${
-                message.type === "user" ? "justify-end" : "justify-start"
-              }`}
-            >
+          {messages.map((message) => {
+            // Add null check
+            if (!message) {
+              console.warn("Received null message in chat"); // Debug log
+              return null;
+            }
+
+            return (
               <div
-                className={`rounded-lg px-4 py-2 ${
-                  message.type === "user"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted"
+                key={message.id}
+                className={`flex ${
+                  message.type === "user" ? "justify-end" : "justify-start"
                 }`}
               >
-                {message.content}
+                <div
+                  className={`rounded-lg px-4 py-2 ${
+                    message.type === "user"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted"
+                  }`}
+                >
+                  {message.content}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </ScrollArea>
       
