@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send } from "lucide-react";
 import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Message {
   id: number;
@@ -20,11 +21,41 @@ export function ChatBox() {
     },
   ]);
   const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const callWebhook = async (strategy: string) => {
+    console.log("Calling Make.com webhook with strategy:", strategy);
+    
+    try {
+      const response = await fetch('https://hook.eu2.make.com/5g416ks32396xppci6xcgsdvf7tc67ea', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          strategy,
+          timestamp: new Date().toISOString(),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to process strategy');
+      }
+
+      console.log("Webhook response:", response);
+      return true;
+    } catch (error) {
+      console.error("Webhook error:", error);
+      throw error;
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || isLoading) return;
 
+    setIsLoading(true);
     console.log("Submitting message:", input);
 
     const newMessage: Message = {
@@ -35,26 +66,40 @@ export function ChatBox() {
 
     setMessages((prevMessages) => {
       console.log("Previous messages:", prevMessages);
-      // Ensure we're working with a valid array
       const validMessages = Array.isArray(prevMessages) ? prevMessages : [];
       return [...validMessages, newMessage];
     });
-    setInput("");
-
-    // Simulate AI response
-    setTimeout(() => {
+    
+    try {
+      await callWebhook(input);
+      
+      // Add system response after successful webhook call
       const response: Message = {
         id: messages.length + 2,
         content: "I'll analyze your strategy and run a backtest simulation. Please wait a moment...",
         type: "system",
       };
+      
       setMessages((prevMessages) => {
-        console.log("Adding AI response:", response);
-        // Ensure we're working with a valid array
+        console.log("Adding system response:", response);
         const validMessages = Array.isArray(prevMessages) ? prevMessages : [];
         return [...validMessages, response];
       });
-    }, 1000);
+
+      toast({
+        title: "Strategy Submitted",
+        description: "Your trading strategy has been sent for analysis.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to process your strategy. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setInput("");
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -100,8 +145,9 @@ export function ChatBox() {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Describe your trading strategy..."
             className="flex-1"
+            disabled={isLoading}
           />
-          <Button type="submit" size="icon">
+          <Button type="submit" size="icon" disabled={isLoading}>
             <Send className="h-4 w-4" />
           </Button>
         </div>
