@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import {
-  BarChart3,
-  ChartCandlestick,
-  MessageSquare,
+  LayoutDashboard,
   Settings,
+  List,
+  BarChart,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 export function Sidebar() {
   const location = useLocation();
@@ -14,49 +15,61 @@ export function Sidebar() {
     return location.pathname === path;
   };
 
+  const menuItems = [
+    {
+      title: "Dashboard",
+      icon: LayoutDashboard,
+      path: "/dashboard",
+    },
+    {
+      title: "Strategies",
+      icon: List,
+      path: "/strategies",
+    },
+    {
+      title: "Analytics",
+      icon: BarChart,
+      path: "/analytics",
+    },
+  ];
+
+  const settingsItem = {
+    title: "Settings",
+    icon: Settings,
+    path: "/settings",
+  };
+
   return (
-    <aside className="fixed left-0 top-16 z-40 h-[calc(100vh-4rem)] w-16 border-r bg-background md:w-64">
+    <aside className="fixed left-0 top-16 z-40 h-[calc(100vh-4rem)] w-16 border-r bg-background transition-width duration-300 ease-in-out md:w-64">
       <div className="flex h-full flex-col py-4">
         <nav className="space-y-2 px-2">
-          <Link to="/dashboard">
-            <Button
-              variant={isActive('/dashboard') ? "secondary" : "ghost"}
-              className="w-full justify-start gap-2"
-            >
-              <ChartCandlestick className="h-5 w-5" />
-              <span className="hidden md:inline">Charts</span>
-            </Button>
-          </Link>
-          
-          <Link to="/strategies">
-            <Button
-              variant={isActive('/strategies') ? "secondary" : "ghost"}
-              className="w-full justify-start gap-2"
-            >
-              <MessageSquare className="h-5 w-5" />
-              <span className="hidden md:inline">Strategies</span>
-            </Button>
-          </Link>
-          
-          <Link to="/analytics">
-            <Button
-              variant={isActive('/analytics') ? "secondary" : "ghost"}
-              className="w-full justify-start gap-2"
-            >
-              <BarChart3 className="h-5 w-5" />
-              <span className="hidden md:inline">Analytics</span>
-            </Button>
-          </Link>
+          {menuItems.map((item) => (
+            <Link to={item.path} key={item.path}>
+              <Button
+                variant={isActive(item.path) ? "secondary" : "ghost"}
+                className={cn(
+                  "w-full justify-start gap-2",
+                  "hover:bg-secondary/80"
+                )}
+              >
+                <item.icon className="h-5 w-5" />
+                <span className="hidden md:inline">{item.title}</span>
+              </Button>
+            </Link>
+          ))}
         </nav>
         
         <div className="mt-auto px-2">
-          <Link to="/settings">
+          <Link to={settingsItem.path}>
             <Button
-              variant={isActive('/settings') ? "secondary" : "ghost"}
-              className="w-full justify-start gap-2"
+              variant={isActive(settingsItem.path) ? "secondary" : "ghost"}
+              className={cn(
+                "w-full justify-start gap-2",
+                "hover:bg-secondary/80"
+              )}
             >
-              <Settings className="h-5 w-5" />
-              <span className="hidden md:inline">Settings</span>
+              <settingsItem.icon className="h-5 w-5" />
+              <span className="hidden md:inline">{settingsItem.title}</span>
             </Button>
           </Link>
         </div>
