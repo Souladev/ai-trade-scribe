@@ -1,8 +1,8 @@
-# Welcome to your Lovable project
+# Welcome to MY  project
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/4ea49e75-6144-457c-9022-4d57fc5b1788
+
 
 ## How can I edit this code?
 
@@ -10,9 +10,8 @@ There are several ways of editing your application.
 
 **Use Lovable**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/4ea49e75-6144-457c-9022-4d57fc5b1788) and start prompting.
 
-Changes made via Lovable will be committed automatically to this repo.
+Changes made via  will be committed automatically to this repo.
 
 **Use your preferred IDE**
 
